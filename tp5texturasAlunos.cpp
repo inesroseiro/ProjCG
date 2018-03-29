@@ -59,20 +59,20 @@ RgbImage imag;
 
 void criaDefineTexturas()
 {   
-	//----------------------------------------- Mesa
-	/*glGenTextures(1, &texture[0]);
+	//----------------------------------------- Parte de cima das latas
+	glGenTextures(1, &texture[0]);
 	glBindTexture(GL_TEXTURE_2D, texture[0]);
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-	imag.LoadBmpFile("mesa.bmp");
+	imag.LoadBmpFile("lata.bmp");
 	glTexImage2D(GL_TEXTURE_2D, 0, 3, 
 	imag.GetNumCols(),
 		imag.GetNumRows(), 0, GL_RGB, GL_UNSIGNED_BYTE,
 		imag.ImageData());
-	*/
+	
 	//----------------------------------------- Chao 
 	glGenTextures(1, &texture[1]);
 	glBindTexture(GL_TEXTURE_2D, texture[1]);
@@ -125,15 +125,28 @@ void resizeWindow(GLsizei w, GLsizei h)
 
 void DrawCircle(float raio, float lineW)
 {
-    float rad;	 
-   int i;
-   glLineWidth(lineW);
-   glBegin(GL_LINE_LOOP);
-     for (i=0; i<360; i++) {
-       rad = i*PI/180.0;
-       glVertex2f( raio*cos(rad), raio*sin(rad));
-     }
-   glEnd();
+	float rad;	 
+	float angle, radian, x, y, tx, ty, xcos, ysin;
+   	int i;
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D,texture[0]);
+   	glLineWidth(lineW);
+    glBegin(GL_TRIANGLE_FAN);
+	for (i=0; i<360; i++) { 
+       	rad = i*PI/180.0;
+		xcos = (float)cos(rad);
+		ysin = (float)sin(rad);
+		x = xcos * raio;
+		y = ysin * raio*lineW;
+		tx = xcos * 0.5 + 0.5;
+		ty = ysin * 0.5 + 0.5;
+		
+		glTexCoord2f(tx, ty);
+		glVertex2f(x, y);
+		
+    }
+    glEnd();
+	glDisable(GL_TEXTURE_2D);
 }
 
 
@@ -142,7 +155,7 @@ void drawScene(){
 	GLUquadricObj*  y = gluNewQuadric ( );
 		
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Chao y=0
-	/*glEnable(GL_TEXTURE_2D);
+	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D,texture[1]);
 	glPushMatrix();
 		glBegin(GL_QUADS);
@@ -153,14 +166,20 @@ void drawScene(){
 		glEnd();
 	glPopMatrix();
 	glDisable(GL_TEXTURE_2D);
-	*/
-	glColor3d(0,3,0);
+
+	//==================================== Parte de baixo da lata 1 
 	glPushMatrix();
 			glTranslatef (3,0.1,2);
 			glRotatef (-90, 1, 0, 0);
 			DrawCircle(0.6,1);
 	glPopMatrix();
-	
+	//==================================== Parte de cima da lata 1 
+	glPushMatrix();
+			glTranslatef (3,2.1,2);
+			glRotatef (-90, 1, 0, 0);
+			DrawCircle(0.6,1);
+	glPopMatrix();
+
 	//==================================== PAralelipipedo Amarelo = LATA 1
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D,texture[2]);
@@ -173,7 +192,6 @@ void drawScene(){
 		gluCylinder( y, 0.6, 0.6, 2, 100, 100);				
 	glPopMatrix();
 
-	/*
 	//==================================== PAralelipipedo Amarelo = LATA 2
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D,texture[2]);
@@ -184,6 +202,19 @@ void drawScene(){
 		gluQuadricNormals   ( y, GLU_SMOOTH );
 		gluQuadricTexture   ( y, GL_TRUE    );
 		gluCylinder( y, 0.6, 0.6, 2, 100, 100);				
+	glPopMatrix();
+
+	//==================================== Parte de baixo da lata 1 
+	glPushMatrix();
+			glTranslatef (4.5,0.1,2);
+			glRotatef (-90, 1, 0, 0);
+			DrawCircle(0.6,1);
+	glPopMatrix();
+	//==================================== Parte de cima da lata 1 
+	glPushMatrix();
+			glTranslatef (4.5,2.1,2);
+			glRotatef (-90, 1, 0, 0);
+			DrawCircle(0.6,1);
 	glPopMatrix();
 
 	//==================================== PAralelipipedo Amarelo = LATA 3
@@ -198,6 +229,19 @@ void drawScene(){
 		gluCylinder( y, 0.6, 0.6, 2, 100, 100);				
 	glPopMatrix();
 
+	//==================================== Parte de baixo da lata 1 
+	glPushMatrix();
+			glTranslatef (6,0.1,2);
+			glRotatef (-90, 1, 0, 0);
+			DrawCircle(0.6,1);
+	glPopMatrix();
+	//==================================== Parte de cima da lata 1 
+	glPushMatrix();
+			glTranslatef (6,2.1,2);
+			glRotatef (-90, 1, 0, 0);
+			DrawCircle(0.6,1);
+	glPopMatrix();
+
 	//==================================== PAralelipipedo Amarelo = LATA 4
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D,texture[2]);
@@ -208,6 +252,19 @@ void drawScene(){
 		gluQuadricNormals   ( y, GLU_SMOOTH );
 		gluQuadricTexture   ( y, GL_TRUE    );
 		gluCylinder( y, 0.6, 0.6, 2, 100, 100);				
+	glPopMatrix();
+
+	//==================================== Parte de baixo da lata 1 
+	glPushMatrix();
+			glTranslatef (7.5,0.1,2);
+			glRotatef (-90, 1, 0, 0);
+			DrawCircle(0.6,1);
+	glPopMatrix();
+	//==================================== Parte de cima da lata 1 
+	glPushMatrix();
+			glTranslatef (7.5,2.1,2);
+			glRotatef (-90, 1, 0, 0);
+			DrawCircle(0.6,1);
 	glPopMatrix();
 
 	//==================================== PAralelipipedo Amarelo = LATA 5 - 1 2o andar
@@ -222,6 +279,20 @@ void drawScene(){
 		gluCylinder( y, 0.6, 0.6, 2, 100, 100);				
 	glPopMatrix();
 
+	//==================================== Parte de baixo da lata 1 
+	glPushMatrix();
+			glTranslatef (3.75,2.1,2);
+			glRotatef (-90, 1, 0, 0);
+			DrawCircle(0.6,1);
+	glPopMatrix();
+	//==================================== Parte de cima da lata 1 
+	glPushMatrix();
+			glTranslatef (3.75,4.1,2);
+			glRotatef (-90, 1, 0, 0);
+			DrawCircle(0.6,1);
+	glPopMatrix();
+
+
 	//==================================== PAralelipipedo Amarelo = LATA 6 - 2 2o andar
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D,texture[2]);
@@ -233,6 +304,20 @@ void drawScene(){
 		gluQuadricTexture   ( y, GL_TRUE    );
 		gluCylinder( y, 0.6, 0.6, 2, 100, 100);				
 	glPopMatrix();
+
+	//==================================== Parte de baixo da lata 1 
+	glPushMatrix();
+			glTranslatef (6.75,2.1,2);
+			glRotatef (-90, 1, 0, 0);
+			DrawCircle(0.6,1);
+	glPopMatrix();
+	//==================================== Parte de cima da lata 1 
+	glPushMatrix();
+			glTranslatef (6.75,4.1,2);
+			glRotatef (-90, 1, 0, 0);
+			DrawCircle(0.6,1);
+	glPopMatrix();
+
 	//==================================== PAralelipipedo Amarelo = LATA 7 - 3 2o andar
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D,texture[2]);
@@ -243,6 +328,19 @@ void drawScene(){
 		gluQuadricNormals   ( y, GLU_SMOOTH );
 		gluQuadricTexture   ( y, GL_TRUE    );
 		gluCylinder( y, 0.6, 0.6, 2, 100, 100);				
+	glPopMatrix();
+
+	//==================================== Parte de baixo da lata 1 
+	glPushMatrix();
+			glTranslatef (5.25,2.1,2);
+			glRotatef (-90, 1, 0, 0);
+			DrawCircle(0.6,1);
+	glPopMatrix();
+	//==================================== Parte de cima da lata 1 
+	glPushMatrix();
+			glTranslatef (5.25,4.1,2);
+			glRotatef (-90, 1, 0, 0);
+			DrawCircle(0.6,1);
 	glPopMatrix();
 
 	//==================================== PAralelipipedo Amarelo = LATA 2 - 3º andar
@@ -257,6 +355,18 @@ void drawScene(){
 		gluCylinder( y, 0.6, 0.6, 2, 100, 100);				
 	glPopMatrix();
 
+	//==================================== Parte de baixo da lata 1 
+	glPushMatrix();
+			glTranslatef (4.5,4.1,2);
+			glRotatef (-90, 1, 0, 0);
+			DrawCircle(0.6,1);
+	glPopMatrix();
+	//==================================== Parte de cima da lata 1 
+	glPushMatrix();
+			glTranslatef (4.5,6.1,2);
+			glRotatef (-90, 1, 0, 0);
+			DrawCircle(0.6,1);
+	glPopMatrix();
 	//==================================== PAralelipipedo Amarelo = LATA 2 - 3º andar
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D,texture[2]);
@@ -269,18 +379,43 @@ void drawScene(){
 		gluCylinder( y, 0.6, 0.6, 2, 100, 100);				
 	glPopMatrix();
 
+	//==================================== Parte de baixo da lata 1 
+	glPushMatrix();
+			glTranslatef (6,4.1,2);
+			glRotatef (-90, 1, 0, 0);
+			DrawCircle(0.6,1);
+	glPopMatrix();
+	//==================================== Parte de cima da lata 1 
+	glPushMatrix();
+			glTranslatef (6,6.1,2);
+			glRotatef (-90, 1, 0, 0);
+			DrawCircle(0.6,1);
+	glPopMatrix();
+
 		//==================================== PAralelipipedo Amarelo = LATA 6 - 1 4o andar
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D,texture[2]);
 	glPushMatrix();
 		glTranslatef (5.25,6.1,2);
-		//glCircle(2);
 		glRotatef (-90, 1, 0, 0);			
 		gluQuadricDrawStyle ( y, GLU_FILL   );
 		gluQuadricNormals   ( y, GLU_SMOOTH );
 		gluQuadricTexture   ( y, GL_TRUE    );
 		gluCylinder( y, 0.6, 0.6, 2, 100, 100);
 
+	glPopMatrix();
+
+	//==================================== Parte de baixo da lata 1 
+	glPushMatrix();
+			glTranslatef (5.25,6.1,2);
+			glRotatef (-90, 1, 0, 0);
+			DrawCircle(0.6,1);
+	glPopMatrix();
+	//==================================== Parte de cima da lata 1 
+	glPushMatrix();
+			glTranslatef (5.25,8.1,2);
+			glRotatef (-90, 1, 0, 0);
+			DrawCircle(0.6,1);
 	glPopMatrix();
 
 
