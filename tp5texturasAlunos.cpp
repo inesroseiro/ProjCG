@@ -19,6 +19,7 @@
 #define BLACK    0.0, 0.0, 0.0, 1.0
 #define GRAY     0.9, 0.92, 0.29, 1.0
 #define PI		 3.14159
+#define CINZENTO	0.329412, 0.329412, 0.329412
 
 //================================================================================
 //===========================================================Variaveis e constantes
@@ -38,7 +39,8 @@ GLint    defineProj=1;
 GLfloat  raio   = 20;
 GLfloat  angulo = 0.35*PI;
 //GLfloat  obsP[] = {10, 5.5, 10};
-GLfloat  obsP[] = {raio*cos(angulo), 0.5, raio*sin(angulo)};
+//GLfloat  obsP[] = {raio*cos(angulo), 13, raio*sin(angulo)};
+GLfloat  obsP[] = {raio*cos(angulo), 13, raio*sin(angulo)};
 GLfloat  incy   = 0.5;
 GLfloat  inca   = 0.03;
 
@@ -52,7 +54,7 @@ GLint    msec=10;					//.. definicao do timer (actualizacao)
 //=========================================================================== INIT
 
 //------------------------------------------------------------ Texturas
-GLuint  texture[3];
+GLuint  texture[6];
 GLuint  tex;
 RgbImage imag;
 
@@ -67,13 +69,13 @@ void criaDefineTexturas()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-	imag.LoadBmpFile("lata.bmp");
+	imag.LoadBmpFile("latinha.bmp");
 	glTexImage2D(GL_TEXTURE_2D, 0, 3, 
 	imag.GetNumCols(),
 		imag.GetNumRows(), 0, GL_RGB, GL_UNSIGNED_BYTE,
 		imag.ImageData());
 	
-	//----------------------------------------- Chao 
+	//----------------------------------------- prateleira
 	glGenTextures(1, &texture[1]);
 	glBindTexture(GL_TEXTURE_2D, texture[1]);
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
@@ -90,12 +92,55 @@ void criaDefineTexturas()
 	//----------------------------------------- Lata 1
 	glGenTextures(1, &texture[2]);
 	glBindTexture(GL_TEXTURE_2D, texture[2]);
+	//glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	imag.LoadBmpFile("teste.bmp");
+	glTexImage2D(GL_TEXTURE_2D, 0, 3, 
+	imag.GetNumCols(),
+		imag.GetNumRows(), 0, GL_RGB, GL_UNSIGNED_BYTE,
+		imag.ImageData());
+
+
+	//----------------------------------------- chao
+	glGenTextures(1, &texture[3]);
+	glBindTexture(GL_TEXTURE_2D, texture[3]);
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	imag.LoadBmpFile("oi.bmp");
+	imag.LoadBmpFile("az-1.bmp");
+	glTexImage2D(GL_TEXTURE_2D, 0, 3, 
+	imag.GetNumCols(),
+		imag.GetNumRows(), 0, GL_RGB, GL_UNSIGNED_BYTE,
+		imag.ImageData());
+
+	//----------------------------------------- chao
+	glGenTextures(1, &texture[4]);
+	glBindTexture(GL_TEXTURE_2D, texture[4]);
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_LINEAR);
+	imag.LoadBmpFile("ex.bmp");
+	glTexImage2D(GL_TEXTURE_2D, 0, 3, 
+	imag.GetNumCols(),
+		imag.GetNumRows(), 0, GL_RGB, GL_UNSIGNED_BYTE,
+		imag.ImageData());
+	
+	//----------------------------------------- parede frente
+	glGenTextures(1, &texture[5]);
+	glBindTexture(GL_TEXTURE_2D, texture[5]);
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_LINEAR);
+	imag.LoadBmpFile("paredes.bmp");
 	glTexImage2D(GL_TEXTURE_2D, 0, 3, 
 	imag.GetNumCols(),
 		imag.GetNumRows(), 0, GL_RGB, GL_UNSIGNED_BYTE,
@@ -106,7 +151,7 @@ void criaDefineTexturas()
 
 void init(void)
 {
-	glClearColor(BLACK);
+	glClearColor(WHITE);
 	glShadeModel(GL_SMOOTH);
 	criaDefineTexturas( );
 	glEnable(GL_TEXTURE_2D);
@@ -149,24 +194,137 @@ void DrawCircle(float raio, float lineW)
 	glDisable(GL_TEXTURE_2D);
 }
 
+void DrawCube(){
+	glBegin(GL_QUADS);
+	// top
+	glColor3f(CINZENTO);
+	glNormal3f(0.0f, 1.0f, 0.0f);
+	glVertex3f(-0.5f, 0.5f, 0.5f);
+	glVertex3f(0.5f, 0.5f, 0.5f);
+	glVertex3f(0.5f, 0.5f, -0.5f);
+	glVertex3f(-0.5f, 0.5f, -0.5f);
+ 
+	glEnd();
+ 
+	glBegin(GL_QUADS);
+	// front
+	glColor3f(CINZENTO);
+	glNormal3f(0.0f, 0.0f, 1.0f);
+	glVertex3f(0.5f, -0.5f, 0.5f);
+	glVertex3f(0.5f, 0.5f, 0.5f);
+	glVertex3f(-0.5f, 0.5f, 0.5f);
+	glVertex3f(-0.5f, -0.5f, 0.5f);
+ 
+	glEnd();
+ 
+	glBegin(GL_QUADS);
+	// right
+	glColor3f(CINZENTO);
+	glNormal3f(1.0f, 0.0f, 0.0f);
+	glVertex3f(0.5f, 0.5f, -0.5f);
+	glVertex3f(0.5f, 0.5f, 0.5f);
+	glVertex3f(0.5f, -0.5f, 0.5f);
+	glVertex3f(0.5f, -0.5f, -0.5f);
+ 
+	glEnd();
+ 
+	glBegin(GL_QUADS);
+	// left
+	glColor3f(CINZENTO);
+	glNormal3f(-1.0f, 0.0f, 0.0f);
+	glVertex3f(-0.5f, -0.5f, 0.5f);
+	glVertex3f(-0.5f, 0.5f, 0.5f);
+	glVertex3f(-0.5f, 0.5f, -0.5f);
+	glVertex3f(-0.5f, -0.5f, -0.5f);
+ 
+	glEnd();
+ 
+	glBegin(GL_QUADS);
+	// bottom
+	glColor3f(CINZENTO);
+	glNormal3f(0.0f, -1.0f, 0.0f);
+	glVertex3f(0.5f, -0.5f, 0.5f);
+	glVertex3f(-0.5f, -0.5f, 0.5f);
+	glVertex3f(-0.5f, -0.5f, -0.5f);
+	glVertex3f(0.5f, -0.5f, -0.5f);
+ 
+	glEnd();
+ 
+	glBegin(GL_QUADS);
+	// back
+	glColor3f(CINZENTO);
+	glNormal3f(0.0f, 0.0f, -1.0f);
+	glVertex3f(0.5f, 0.5f, -0.5f);
+	glVertex3f(0.5f, -0.5f, -0.5f);
+	glVertex3f(-0.5f, -0.5f, -0.5f);
+	glVertex3f(-0.5f, 0.5f, -0.5f);
+ 
+	glEnd();
+}
 
 void drawScene(){
 	
 	GLUquadricObj*  y = gluNewQuadric ( );
 		
-	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Chao y=0
+	
+
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ chao
 	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D,texture[1]);
+	glBindTexture(GL_TEXTURE_2D,texture[3]);
 	glPushMatrix();
 		glBegin(GL_QUADS);
-			glTexCoord2f(0.0f,0.0f); glVertex3i( -5,  0, 0 ); 
-			glTexCoord2f(5.0f,0.0f); glVertex3i( xC, 0, 0 ); 
-			glTexCoord2f(5.0f,10.0f); glVertex3i( xC, 0, xC/3); 
-			glTexCoord2f(0.0f,5.0f); glVertex3i( -5,  0,  xC/3); 
+			glTexCoord2f(0.0f,10.0f); glVertex3i(-5,  -5, 0 ); 
+			glTexCoord2f(10.0f,10.0f); glVertex3i( xC, -5, 0 );
+			glTexCoord2f(10.0f,0.0f); glVertex3i( xC,-5, xC);   
+			glTexCoord2f(0.0f,0.0f); glVertex3i( -5,  -5, xC);
 		glEnd();
 	glPopMatrix();
 	glDisable(GL_TEXTURE_2D);
 
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ parede FRENTE
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D,texture[5]);
+	glPushMatrix();
+		glBegin(GL_QUADS);
+			glTexCoord2f(0.0f,10.0f); glVertex3i( -5, 10, 0); 
+			glTexCoord2f(10.0f,10.0f); glVertex3i( xC, 10, 0 ); 
+			glTexCoord2f(10.0f,0.0f); glVertex3i( xC, -5, 0); 
+			glTexCoord2f(0.0f,0.0f); glVertex3i( -5,  -5, 0); 
+		glEnd();
+	glPopMatrix();
+	glDisable(GL_TEXTURE_2D);
+
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ parede LADO
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D,texture[4]);
+	glPushMatrix();
+		glBegin(GL_QUADS);
+			glTexCoord2f(0.0f,10.0f); glVertex3i( -5, 10, 0); 
+			glTexCoord2f(10.0f,10.0f); glVertex3i( -5, 10, xC ); 
+			glTexCoord2f(10.0f,0.0f); glVertex3i( -5, -5, xC); 
+			glTexCoord2f(0.0f,0.0f); glVertex3i( -5,  -5, 0); 
+		glEnd();
+	glPopMatrix();
+	glDisable(GL_TEXTURE_2D);
+
+
+	glPushMatrix();
+		//DrawCube();
+	glPopMatrix();
+
+
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~prateleira
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D,texture[1]);
+	glPushMatrix();
+		glBegin(GL_QUADS);
+			glTexCoord2f(0.0f,10.0f); glVertex3i( -5,  0, 0 ); 
+			glTexCoord2f(10.0f,10.0f); glVertex3i( xC, 0, 0 ); 
+			glTexCoord2f(10.0f,0.0f); glVertex3i( xC, 0, xC/3); 
+			glTexCoord2f(0.0f,0.0f); glVertex3i( -5,  0,  xC/3); 
+		glEnd();
+	glPopMatrix();
+	glDisable(GL_TEXTURE_2D);
 	//==================================== Parte de baixo da lata 1 
 	glPushMatrix();
 			glTranslatef (3,0.1,2);
@@ -419,20 +577,22 @@ void drawScene(){
 	glPopMatrix();
 
 
+
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Eixos
-	/*glColor4f(BLACK);
+	/*glColor4f(WHITE);
 	glBegin(GL_LINES);
 		glVertex3i( 0, 0, 0); 
-		glVertex3i(10, 0, 0); 
+		glVertex3i(100, 0, 0); 
 	glEnd();
 	glBegin(GL_LINES);
 		glVertex3i(0,  0, 0); 
-		glVertex3i(0, 10, 0); 
+		glVertex3i(0, 100, 0); 
 	glEnd();
 	glBegin(GL_LINES);
 		glVertex3i( 0, 0, 0); 
-		glVertex3i( 0, 0,10); 
+		glVertex3i( 0, 0,100); 
 	glEnd();
+
 	*/
 	
 
@@ -479,23 +639,9 @@ void Timer(int value)
 void keyboard(unsigned char key, int x, int y){
 	
 	switch (key) {
-	//--------------------------- Textura no quadro
-	case 'r':
-	case 'R':
-		glutPostRedisplay();
-		break;
-	//--------------------------- Textura no azulejo
-	case 't':
-	case 'T':
-		glutPostRedisplay();
-		break;
-	//--------------------------- Projeccao
 	case 'q':
 	case 'Q':
 		defineProj=(defineProj+1)%2;
-		 
-		break;
-	//--------------------------- Escape
 	case 27:
 		exit(0);
 		break;	
