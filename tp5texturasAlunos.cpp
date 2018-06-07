@@ -18,6 +18,7 @@
 #define BLACK 0.0, 0.0, 0.0, 1.0
 #define GRAY 0.9, 0.92, 0.29, 1.0
 #define PI 3.14159
+#define CASTANHO 0.545, 0.271, 0.075, 1.0
 #define CINZENTO 0.329412, 0.329412, 0.329412
 
 //------------------------------------------------------------ Sistema Coordenadas
@@ -27,6 +28,8 @@ GLfloat mesa = 3.0;
 GLfloat quad = 6.0;
 GLfloat mesaP[] = {4, 0, 10};
 GLfloat quadP[] = {4, 4, 0.1};
+GLint    msec=10;					//.. definicao do timer (actualizacao)
+
 
 //------------------------------------------------------------ Observador
 GLint defineView = 0;
@@ -45,7 +48,7 @@ GLfloat incBule = 1;
 GLint repete = 1;
 GLint maxR = 20;
 GLint numQuadro = 5;
-GLuint texture[6];
+GLuint texture[7];
 GLuint tex;
 RgbImage imag;
 
@@ -56,15 +59,14 @@ GLfloat posicao_luz[] = {0.0, 50.0, 50.0, 1.0};
 
 GLint noite = 1;
 GLfloat luzGlobalCor[4] = {1.0, 1.0, 1.0, 1.0};
-GLfloat luz_ambiente[4] = {1, 1, 1, 1};
+
+GLfloat luz_ambiente[4] = {0, 1, 1, 1};
 GLfloat luz_especular[4] = {0.1, 0.1, 0.1, 0.1};
 GLfloat luz_difusa[4] = {0.1, 0.1, 0.1, 0.1};
 
 // de 0 a 128
 GLint especMaterial = 90;
 GLfloat espec[4] = {0.5, 0.5, 0.5, 0.5};
-
-
 
 void define_iluminacao(void)
 {
@@ -75,7 +77,7 @@ void define_iluminacao(void)
 	// glMateriali(GL_FRONT,GL_SHININESS,especMaterial);
 
 	// quantidade de brilho do material
-	//glMaterialfv(GL_FRONT,GL_SPECULAR, espec);
+	glMaterialfv(GL_FRONT,GL_SPECULAR, espec);
 	glLightfv(GL_LIGHT0, GL_POSITION, posicao_luz);
 	glLightfv(GL_LIGHT0, GL_SPECULAR, luz_especular);
 	glLightfv(GL_LIGHT0, GL_AMBIENT, luz_ambiente);
@@ -163,6 +165,20 @@ void criaDefineTexturas()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_LINEAR);
 	imag.LoadBmpFile("paredes.bmp");
+	glTexImage2D(GL_TEXTURE_2D, 0, 3,
+				 imag.GetNumCols(),
+				 imag.GetNumRows(), 0, GL_RGB, GL_UNSIGNED_BYTE,
+				 imag.ImageData());
+
+	// aplica textura janela
+	glGenTextures(1, &texture[6]);
+	glBindTexture(GL_TEXTURE_2D, texture[6]);
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_LINEAR);
+	imag.LoadBmpFile("paisagem.bmp");
 	glTexImage2D(GL_TEXTURE_2D, 0, 3,
 				 imag.GetNumCols(),
 				 imag.GetNumRows(), 0, GL_RGB, GL_UNSIGNED_BYTE,
@@ -309,7 +325,7 @@ void draw_terceira_fila()
 		//Parte de cima da lata
 		glColor3f(CINZENTO);
 		glPushMatrix();
-		glTranslatef(4.5+ 1.5f * i, 6.1, 2);
+		glTranslatef(4.5 + 1.5f * i, 6.1, 2);
 		glRotatef(-90, 1, 0, 0);
 		DrawCircle(0.6, 1);
 		glPopMatrix();
@@ -329,7 +345,8 @@ void draw_terceira_fila()
 	}
 }
 
-void desenha_lata(){
+void desenha_lata()
+{
 	GLUquadricObj *y = gluNewQuadric();
 
 	glEnable(GL_TEXTURE_2D);
@@ -356,9 +373,96 @@ void desenha_lata(){
 	glRotatef(-90, 1, 0, 0);
 	DrawCircle(0.6, 1);
 	glPopMatrix();
-
 }
 
+void draw_janela()
+{
+	//desenhar paisagem
+
+	glEnable(GL_TEXTURE_2D);
+	glColor4f(1.0, 1.0, 1.0, 1.0);
+	glBindTexture(GL_TEXTURE_2D, texture[6]);
+
+	glPushMatrix();
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex3f(-4.8, 6.3, 8.3);
+
+	glTexCoord2f(2.0f, 1.0f);
+	glVertex3f(-4.8, 6.3, xC + 0.3);
+
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex3f(-4.8, -3.3, xC + 0.3);
+
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex3f(-4.8, -3.3, 8.3);
+
+	glEnd();
+	glPopMatrix();
+	glDisable(GL_TEXTURE_2D);
+
+	//desenhar madeira da janela
+
+	glEnable(GL_TEXTURE_2D);
+	glColor4f(1.0, 1.0, 1.0, 1.0);
+	glBindTexture(GL_TEXTURE_2D, texture[1]);
+
+	glPushMatrix();
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex3f(-4.9, 6.5, 7.9);
+
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex3f(-4.9, 6.5, xC + 0.5);
+
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex3f(-4.9, -3.5, xC + 0.5);
+
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex3f(-4.9, -3.5, 7.9);
+
+	//desenhar madeira da janela
+
+	glEnable(GL_TEXTURE_2D);
+	glColor4f(1.0, 1.0, 1.0, 1.0);
+	glBindTexture(GL_TEXTURE_2D, texture[1]);
+
+	glPushMatrix();
+	glBegin(GL_QUADS);
+
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex3f(-4.7, 6.5, 12.4);
+
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex3f(-4.7, 6.5, xC - 3);
+
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex3f(-4.7, -3.5, xC - 3);
+
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex3f(-4.7, -3.5, 12.4);
+
+	glEnd();
+	glPopMatrix();
+	glDisable(GL_TEXTURE_2D);
+}
+
+void desenha_cadeira()
+{
+	glDisable(GL_TEXTURE_2D);
+	glColor4f(0.5f, 0.35f, 0.05f, 1.0f);
+	glPushMatrix();
+	glBegin(GL_QUADS);
+
+	glVertex3i(0, -7, 7);
+	glVertex3i(xC-4, -7, 7);
+	glVertex3i(xC-4, -7, xC);
+	glVertex3i(0, -7, xC);
+
+	glEnd();
+	glPopMatrix();
+	
+}
 
 void drawScene()
 {
@@ -421,7 +525,7 @@ void drawScene()
 
 	//prateleira
 	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D,texture[1]);
+	glBindTexture(GL_TEXTURE_2D, texture[1]);
 	glColor3f(0.5f, 0.35f, 0.05f);
 
 	glPushMatrix();
@@ -438,11 +542,12 @@ void drawScene()
 	glPopMatrix();
 	glDisable(GL_TEXTURE_2D);
 
+	draw_janela();
+	desenha_cadeira();
 	draw_primeira_fila();
 	draw_segunda_fila();
 	draw_terceira_fila();
 	desenha_lata();
-	
 }
 
 void display(void)
@@ -480,12 +585,15 @@ void display(void)
 	glutSwapBuffers();
 }
 
-
-
+void Timer(int value) 
+{
+	glutPostRedisplay();
+	glutTimerFunc(msec,Timer, 1);
+}
 // Eventos do teclado
 void keyboard(unsigned char key, int x, int y)
 {
-
+	printf("cheguei aqui\n");
 	switch (key)
 	{
 	case 'q':
@@ -537,10 +645,11 @@ int main(int argc, char **argv)
 
 	init();
 
+	glutKeyboardFunc(keyboard);
+	glutTimerFunc(msec, Timer, 1);
 	glutSpecialFunc(teclasNotAscii);
 	glutDisplayFunc(display);
 	glutReshapeFunc(resizeWindow);
-	glutKeyboardFunc(keyboard);
 
 	glutMainLoop();
 
